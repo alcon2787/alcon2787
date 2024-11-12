@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prueba - Conexión Socket Lector de Huellas</title>
+  <style>
+    /* Example styling similar to Tailwind CSS */
+    .container { max-width: 1024px; margin: 0 auto; padding: 20px; }
+    .header { font-size: 1.5rem; font-weight: 600; color: #2d3748; }
+    .content { background-color: #ffffff; padding: 24px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); border-radius: 8px; color: #1a202c; }
+    .button { padding: 10px 20px; background-color: #4a5568; color: white; border: none; border-radius: 4px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">Prueba - Conexión Socket Lector de Huellas</header>
+    
+    <div class="content">
+      <button class="button" onclick="sendMessage()">Leer Huella</button>
+      <p id="message">Esperando mensajes...</p>
+    </div>
+  </div>
+
+  <script>
+    const messageElement = document.getElementById('message');
+
+    function sendMessage() {
+      const socket = new WebSocket('ws://localhost:5000/validacion-huella/');
+      
+      socket.onopen = () => {
+        console.log('Conexión WebSocket abierta');
+        socket.send('Leer_Huella');
+        console.log('Mensaje enviado');
+      };
+
+      socket.onmessage = (event) => {
+        console.log('Mensaje recibido del servidor:', event.data);
+        messageElement.textContent = event.data;
+        socket.close();
+      };
+
+      socket.onerror = (error) => {
+        console.error('Error en la conexión WebSocket:', error);
+      };
+
+      socket.onclose = (event) => {
+        console.log('Conexión WebSocket cerrada:', event.reason);
+      };
+    }
+  </script>
+</body>
+</html>
